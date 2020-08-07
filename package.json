@@ -1,0 +1,27 @@
+{
+  "name": "eth-total-supply",
+  "version": "0.0.0",
+  "description": "Calculate the total supply of ETH",
+  "scripts": {
+    "start": "ts-node --transpile-only calculate-total-supply.ts",
+    "geth-docker-pull": "docker pull ethereum/client-go",
+    "geth-main-fast-sync": "docker run -it -p 8545:8545 -p 30303:30303 -v ~/development/query-ethereum/geth-data:/root/.ethereum ethereum/client-go --rpc --rpcapi eth --rpcaddr 0.0.0.0 --rpccorsdomain '*' --nousb"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lastmjs/eth-total-supply.git"
+  },
+  "keywords": [],
+  "author": "Jordan Last <jordan.michael.last@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lastmjs/eth-total-supply/issues"
+  },
+  "homepage": "https://github.com/lastmjs/eth-total-supply#readme",
+  "dependencies": {
+    "bignumber.js": "9.0.0",
+    "node-fetch": "2.6.0",
+    "ts-node": "8.10.2",
+    "typescript": "3.9.7"
+  }
+}
