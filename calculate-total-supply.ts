@@ -1,13 +1,25 @@
+// TODO another way to verify the supply would be to walk all accounts and add up their balances
+// TODO one caveat to this is selfdestructed contracts who send the balances to themselves...would have to account for that somehow
+
 // TODO make sure everything is perfectly declarative
 // TODO I think I should keep this all in one file so that it is extremely simple
 // TODO add really good comments to all functions and maybe variables...really comment this thing up
 // TODO get rid of all typescript errors
 
+// TODO check my work here: https://github.com/madumas/ethsupply
+// TODO check against etherscan and various others
+
+// TODO the genesis data is here for geth: https://github.com/ethereum/go-ethereum/blob/48b484c5ac537d1759c9903ce81302c298f03a84/core/genesis_alloc.go
+// TODO the genesis data is here for openethereum: https://raw.githubusercontent.com/openethereum/openethereum/master/ethcore/res/ethereum/foundation.json
+// TODO the genesis data for Nethermind: https://raw.githubusercontent.com/NethermindEth/nethermind/master/src/Nethermind/Chains/foundation.json
+// TODO it would be great to find out parity's information as well
+
+// TODO more work checking by Nethermind: https://github.com/NethermindEth/nethermind/pull/2193/files
+// TODO https://docs.nethermind.io/nethermind/guides-and-helpers/custom-analytic-tools
+
 import * as fetch from 'node-fetch';
 import * as fs from 'fs';
 import { BigNumber } from 'bignumber.js';
-
-const genesisSupplyToFoundation: WEI = new BigNumber('11901484239480000000000000');
 
 type WEI = BigNumber;
 type ETH = BigNumber;
@@ -15,6 +27,18 @@ type ETH = BigNumber;
 type GenesisBlockDistribution = {
     [ethAddress: string]: {
         wei: string;
+    };
+};
+
+type NethermindGenesisBlockDistribution = {
+    [ethAddress: string]: {
+        balance?: string;
+    };
+};
+
+type OpenEthereumGenesisBlockDistribution = {
+    [ethAddress: string]: {
+        balance?: string;
     };
 };
 
@@ -27,52 +51,87 @@ type GenesisBlockDistribution = {
 
     console.log('genesisSupplyInETH', genesisSupplyInETH.toString());
 
-    const latestBlockNumber: number = await getLatestBlockNumber();
+    // // const latestBlockNumber: number = await getLatestBlockNumber();
+    const latestBlockNumber: number = 1778436;
 
     console.log('latestBlockNumber', latestBlockNumber);
 
-    const blockRewardSupply: WEI = calculateBlockRewardSupply(latestBlockNumber);
+    // const blockRewardSupply: WEI = calculateBlockRewardSupply(latestBlockNumber);
 
-    console.log('blockRewardSupply', blockRewardSupply.toString());
+    // console.log('blockRewardSupply', blockRewardSupply.toString());
 
-    const blockRewardSupplyInETH: ETH = blockRewardSupply.dividedBy(10**18);
+    // const blockRewardSupplyInETH: ETH = blockRewardSupply.dividedBy(10**18);
 
-    console.log('blockRewardSupplyInETH', blockRewardSupplyInETH.toString());
+    // console.log('blockRewardSupplyInETH', blockRewardSupplyInETH.toString());
 
-    const uncleRewardSupply: WEI = await calculateUncleRewardSupply(latestBlockNumber);
+    // const uncleRewardSupply: WEI = await calculateUncleRewardSupply(latestBlockNumber);
 
-    console.log('uncleRewardSupply', uncleRewardSupply.toString());
+    // console.log('uncleRewardSupply', uncleRewardSupply.toString());
 
-    const uncleRewardSupplyInETH: ETH = uncleRewardSupply.dividedBy(10**18);
+    // const uncleRewardSupplyInETH: ETH = uncleRewardSupply.dividedBy(10**18);
 
-    console.log('uncleRewardSupplyInETH', uncleRewardSupplyInETH.toString());
+    // console.log('uncleRewardSupplyInETH', uncleRewardSupplyInETH.toString());
 
-    const totalSupply: WEI = genesisSupply.plus(blockRewardSupply).plus(uncleRewardSupply);
+    // const totalSupply: WEI = genesisSupply.plus(blockRewardSupply).plus(uncleRewardSupply);
 
-    console.log('totalSupply', totalSupply.toString());
+    // console.log('totalSupply', totalSupply.toString());
 
-    const totalSupplyInETH: ETH = (genesisSupply.plus(blockRewardSupply).plus(uncleRewardSupply)).dividedBy(10**18);
+    // const totalSupplyInETH: ETH = (genesisSupply.plus(blockRewardSupply).plus(uncleRewardSupply)).dividedBy(10**18);
 
-    console.log('totalSupplyInETH', totalSupplyInETH.toString());
+    // console.log('totalSupplyInETH', totalSupplyInETH.toString());
 })();
 
+// TODO add in the config information from parity-ethereum
 function calculateGenesisSupply(): WEI {
-    const genesisSupplyFromConfig: WEI = calculateGenesisSupplyFromConfig();
-    return genesisSupplyFromConfig.plus(genesisSupplyToFoundation);
+    // const genesisSupplyFromGethConfig: WEI = calculateGenesisSupplyFromGethConfig();
+    // const genesisSupplyFromParityConfig: WEI = calculateGenesisSupplyFromParityConfig();
+    const genesisSupplyFromOpenEthereumConfig: WEI = calculateGenesisSupplyFromOpenEthereumConfig();
+    const genesisSupplyFromNethermindConfig: WEI = calculateGenesisSupplyFromNethermindConfig();
+
+    if (!genesisSupplyFromNethermindConfig.eq(genesisSupplyFromOpenEthereumConfig)) {
+        throw new Error(`Genesis supplies do not match between client configs`);
+    }
+
+    return genesisSupplyFromOpenEthereumConfig;
 }
 
-// TODO I took the genesis config from here...I'm not sure how to get the configs from the clients, for example
-// I am not sure how geth is getting its genesis config
-// TODO to get the seemingly accurate config, I had to go to this pull request https://github.com/ethereum/pyethsaletool/blob/cab1c9d8ca27f5e86a9eb36a2a56915f5f7830d1/genesis_block.json
-function calculateGenesisSupplyFromConfig(): WEI {
-    const genesisBlockString: string = fs.readFileSync('./genesis-block.json');
-    const genesisBlockJSON: GenesisBlockDistribution = JSON.parse(genesisBlockString); 
+// TODO calculating the genesis supply from geth requires decoding an RLP-encoded list of (address, balance) tuples
+// TODO the RLP-encoded gensis information can be found here: https://github.com/ethereum/go-ethereum/blob/48b484c5ac537d1759c9903ce81302c298f03a84/core/genesis_alloc.go
+// function calculateGenesisSupplyFromGethConfig(): WEI {
+//     return new BigNumber(0);
+// }
 
-    const weiValues: ReadonlyArray<WEI> = Object.values(genesisBlockJSON).map((temp) => {
-        return new BigNumber(temp.wei);
+// TODO Parity might be Open Ethereum now
+function calculateGenesisSupplyFromParityConfig(): WEI {
+    return new BigNumber(0);
+}
+
+function calculateGenesisSupplyFromOpenEthereumConfig(): WEI {
+    // The open-ethereum-foundation.json file was taken from the Open Ethereum GitHub repository
+    // The file can be found here: https://github.com/openethereum/openethereum/blob/master/ethcore/res/ethereum/foundation.json
+    const configString: string = fs.readFileSync('./open-ethereum-foundation.json');
+    const configJSON: OpenEthereumGenesisBlockDistribution = JSON.parse(configString).accounts;
+
+    const weiValues: ReadonlyArray<WEI> = Object.values(configJSON).map((genesisBlockDistribution) => {
+        return genesisBlockDistribution.balance === undefined ? new BigNumber(0) : new BigNumber(genesisBlockDistribution.balance, 16);
     });
 
-    console.log('weiValues.length', weiValues.length);
+    const weiSum: WEI = weiValues.reduce((sum: WEI, weiValue: WEI) => {
+        return sum.plus(weiValue);
+    }, new BigNumber(0));
+
+    return weiSum;
+}
+
+function calculateGenesisSupplyFromNethermindConfig(): WEI {
+    // The nethermind-foundation.json file was taken from the Nethermind GitHub repository
+    // The file can be found here: https://github.com/NethermindEth/nethermind/blob/master/src/Nethermind/Chains/foundation.json
+    const configString: string = fs.readFileSync('./nethermind-foundation.json');
+    const configJSON: NethermindGenesisBlockDistribution = JSON.parse(configString).accounts;
+
+    const weiValues: ReadonlyArray<WEI> = Object.values(configJSON).map((genesisBlockDistribution) => {
+        return genesisBlockDistribution.balance === undefined ? new BigNumber(0) : new BigNumber(genesisBlockDistribution.balance, 16);
+    });
 
     const weiSum: WEI = weiValues.reduce((sum: WEI, weiValue: WEI) => {
         return sum.plus(weiValue);
@@ -119,25 +178,42 @@ function getUncleReward(blockNumber: number): WEI {
     return new BigNumber(1.75).times(10**18);
 }
 
-async function getNumUnclesForBlock(blockNumber: number) {
+// TODO figure out how to pageinate the uncle thing here
+async function getNumUnclesForBlocks(
+    startBlockNumber: number,
+    endBlockNumber: number,
+    currentBlockNumber: number = 0,
+    skip: number = 10000
+): Promise<Array<number>> {
+
+    // const startIndex =
+
+    const body = new Array(endBlockNumber - startBlockNumber).fill(0).map((_, index) => {
+        return {
+            id: 1,
+            jsonrpc: '2.0',
+            method: 'eth_getUncleCountByBlockNumber',
+            params: [
+                `0x${new Number(startBlockNumber + index).toString(16)}`
+            ]
+        };
+    });
+
     const result = await fetch('http://localhost:8545', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            id: 1,
-            jsonrpc: '2.0',
-            method: 'eth_getUncleCountByBlockNumber',
-            params: [
-                `0x${new Number(blockNumber).toString(16)}`
-            ]
-        })
+        body: JSON.stringify(body)
     });
 
     const resultJSON = await result.json();
 
-    return parseInt(resultJSON.result);
+    console.log(resultJSON);
+
+    return resultJSON.map((result: any) => {
+        return parseInt(resultJSON.result);
+    });
 }
 
 async function getLatestBlockNumber(): Promise<number> {
@@ -166,31 +242,10 @@ function calculateBlockRewardSupply(latestBlockNumber: number): WEI {
     return blockRewardSupplyFrom0To4369999.plus(blockRewardSupplyFrom437000To7280000).plus(blockRewardSupplyRemaining);
 }
 
-// TODO this part is what will take forever
-// TODO see if there is an easy way to batch this information...ethereum etl might really help here. We might want to avoid that to keep things simple though
-// TODO do we want to persist this information so that we don't have to start over every time?
+// TODO I think the uncle reward calculations might be more complicated than I thought
 async function calculateUncleRewardSupply(latestBlockNumber: number): Promise<WEI> {
-
-    console.log('calculateUncleRewardSupply');
-
-    let uncleRewardSupply: WEI = new BigNumber(0);
-
-    for (let i=1; i <= latestBlockNumber; i++) {
-        const blockNumber: number = i;
-
-        console.log('blockNumber', blockNumber);
-
-        const uncleReward = getUncleReward(blockNumber);
-        const numUncles = await getNumUnclesForBlock(blockNumber);
-
-        console.log('uncleReward', uncleReward);
-        console.log('numUncles', numUncles);
-
-        uncleRewardSupply = uncleRewardSupply.plus(uncleReward.times(numUncles));
-
-        console.log('uncleRewardSupply', uncleRewardSupply);
-        console.log();
-    }
-
-    return uncleRewardSupply;
+    const numUnclesForBlocks: Array<number> = await getNumUnclesForBlocks(1, latestBlockNumber);
+    return numUnclesForBlocks.reduce((sum: WEI, numUncles: number, index: number) => {
+        return sum.plus(getUncleReward(index).times(numUncles));
+    }, new BigNumber(0));
 }
