@@ -1,27 +1,25 @@
+// similar scripts:
+// https://github.com/madumas/ethsupply
+// https://github.com/CurrencyTycoon/mysupplyaudit
+// https://github.com/NethermindEth/nethermind/pull/2193/files
+// https://docs.nethermind.io/nethermind/guides-and-helpers/custom-analytic-tools
+
 // TODO another way to verify the supply would be to walk all accounts and add up their balances
 // TODO one caveat to this is selfdestructed contracts who send the balances to themselves...would have to account for that somehow
 
+// TODO document the block rewards by hard forks
+
 // TODO make sure everything is perfectly declarative
-// TODO I think I should keep this all in one file so that it is extremely simple
 // TODO add really good comments to all functions and maybe variables...really comment this thing up
 // TODO get rid of all typescript errors
+// TODO add really good readme with methodology
+// TODO add command-line options to choose block that you want to verify for, or default to the latest synced block
 
 // TODO check my work here: https://github.com/madumas/ethsupply
+// TODO check my work against: https://github.com/CurrencyTycoon/mysupplyaudit
 // TODO check against etherscan and various others
 
-// TODO the genesis data is here for geth: https://github.com/ethereum/go-ethereum/blob/48b484c5ac537d1759c9903ce81302c298f03a84/core/genesis_alloc.go
-// TODO the genesis data is here for openethereum: https://raw.githubusercontent.com/openethereum/openethereum/master/ethcore/res/ethereum/foundation.json
-// TODO the genesis data for Nethermind: https://raw.githubusercontent.com/NethermindEth/nethermind/master/src/Nethermind/Chains/foundation.json
-// TODO it would be great to find out parity's information as well
-
-// TODO more work checking by Nethermind: https://github.com/NethermindEth/nethermind/pull/2193/files
-// TODO https://docs.nethermind.io/nethermind/guides-and-helpers/custom-analytic-tools
-
-// TODO also check my work here: https://github.com/CurrencyTycoon/mysupplyaudit
-
-// TODO verifying block reward information, we want to be able to point to this information in all of the major clients for verification
-// TODO This might be where geth gets the transition to the new values: https://github.com/ethereum/go-ethereum/blob/master/params/config.go
-// This is where geth gets the reward values: https://github.com/ethereum/go-ethereum/blob/master/consensus/ethash/consensus.go
+// TODO trying to get memory under control
 
 import * as fetch from 'node-fetch';
 import * as fs from 'fs';
@@ -70,6 +68,8 @@ type UncleBlockMap = {
     [uncleHash: string]: HexString;
 };
 
+let blockRewardSupply = new BigNumber(0);
+
 (async () => {
     const genesisSupply: WEI = calculateGenesisSupply();
 
@@ -80,38 +80,26 @@ type UncleBlockMap = {
     console.log('genesisSupplyInETH', genesisSupplyInETH.toString());
 
     // // const latestBlockNumber: number = await getLatestBlockNumber();
-    const latestBlockNumber: number = 10;
+    // const latestBlockNumber: number = 6912; // should be 72,049,306.59375 or 72,049,306.59323
+    const latestBlockNumber: number = 4000000;
 
     console.log('latestBlockNumber', latestBlockNumber);
 
-    const blocksWithUncleBlocks: ReadonlyArray<BlockWithUncleBlocks> = await getBlocksWithUncleBlocks(1, latestBlockNumber);
+    await calculateBlockRewardSupply(1, latestBlockNumber);
 
-    console.log('blocksWithUncleBlocks', JSON.stringify(blocksWithUncleBlocks, null, 2));
-    console.log('blocksWithUncleBlocks.length', blocksWithUncleBlocks.length);
+    console.log('blockRewardSupply', blockRewardSupply.toString());
 
-    // const blockRewardSupply: WEI = calculateBlockRewardSupply(latestBlockNumber);
+    const blockRewardSupplyInETH: ETH = blockRewardSupply.dividedBy(10**18);
 
-    // console.log('blockRewardSupply', blockRewardSupply.toString());
+    console.log('blockRewardSupplyInETH', blockRewardSupplyInETH.toString());
 
-    // const blockRewardSupplyInETH: ETH = blockRewardSupply.dividedBy(10**18);
+    const totalSupply: WEI = genesisSupply.plus(blockRewardSupply);
 
-    // console.log('blockRewardSupplyInETH', blockRewardSupplyInETH.toString());
+    console.log('totalSupply', totalSupply.toString());
 
-    // const uncleRewardSupply: WEI = await calculateUncleRewardSupply(latestBlockNumber);
+    const totalSupplyInETH: ETH = (genesisSupply.plus(blockRewardSupply)).dividedBy(10**18);
 
-    // console.log('uncleRewardSupply', uncleRewardSupply.toString());
-
-    // const uncleRewardSupplyInETH: ETH = uncleRewardSupply.dividedBy(10**18);
-
-    // console.log('uncleRewardSupplyInETH', uncleRewardSupplyInETH.toString());
-
-    // const totalSupply: WEI = genesisSupply.plus(blockRewardSupply).plus(uncleRewardSupply);
-
-    // console.log('totalSupply', totalSupply.toString());
-
-    // const totalSupplyInETH: ETH = (genesisSupply.plus(blockRewardSupply).plus(uncleRewardSupply)).dividedBy(10**18);
-
-    // console.log('totalSupplyInETH', totalSupplyInETH.toString());
+    console.log('totalSupplyInETH', totalSupplyInETH.toString());
 })();
 
 function calculateGenesisSupply(): WEI {
@@ -166,11 +154,15 @@ function calculateGenesisSupplyFromNethermindConfig(): WEI {
     return weiSum;
 }
 
-// TODO we might need to get this information from the blockchain directly for ultimate assurance
-// TODO we need to document very clearly where the amounts and block numbers come from in multiple clients
+// Geth block reward definitions: https://github.com/ethereum/go-ethereum/blob/master/consensus/ethash/consensus.go#L40
+// Geth hard fork block number definitions: https://github.com/ethereum/go-ethereum/blob/master/params/config.go#L55
+// Open Ethereum block reward definitions:
+// Open Ethereum hard fork block number definitions:
+// Nethermind block reward definitions:
+// Nethermind hard fork block number definitions:
 function getBlockReward(blockNumber: number): WEI {
     if (
-        blockNumber >= 0 &&
+        blockNumber >= 1 &&
         blockNumber < 4370000
     ) {
         return new BigNumber(5).times(10**18);
@@ -186,47 +178,31 @@ function getBlockReward(blockNumber: number): WEI {
     return new BigNumber(2).times(10**18);
 }
 
-// TODO we might need to get this information from the blockchain directly for ultimate assurance
-function getUncleReward(blockNumber: number): WEI {
-    if (
-        blockNumber >= 0 &&
-        blockNumber < 4370000
-    ) {
-        return new BigNumber(4.375).times(10**18);
-    }
-
-    if (
-        blockNumber >= 4370000 &&
-        blockNumber < 7280000
-    ) {
-        return new BigNumber(2.625).times(10**18);
-    }
-
-    return new BigNumber(1.75).times(10**18);
-}
-
-async function getBlocksWithUncleBlocks(
+async function calculateBlockRewardSupply(
     startBlockNumber: number,
     endBlockNumber: number,
     currentStartBlockNumber: number = startBlockNumber,
-    skip: number = 10000,
-    allBlocks: ReadonlyArray<BlockWithUncleBlocks> = []
-): Promise<ReadonlyArray<BlockWithUncleBlocks>> {
+    skip: number = 10000
+): Promise<void> {
+
+    console.log('blockRewardSupply', blockRewardSupply.toString());
 
     const currentEndBlockNumber: number = currentStartBlockNumber + skip - 1 < endBlockNumber ? currentStartBlockNumber + skip - 1 : endBlockNumber;
 
     console.log('currentStartBlockNumber', currentStartBlockNumber);
     console.log('currentEndBlockNumber', currentEndBlockNumber);
 
-    const someBlocksWithUncleBlocks: ReadonlyArray<BlockWithUncleBlocks> = await fetchBlocksWithUncleBlocks(currentStartBlockNumber, currentEndBlockNumber);
+    const blocksWithUncleBlocks: ReadonlyArray<BlockWithUncleBlocks> = await fetchBlocksWithUncleBlocks(currentStartBlockNumber, currentEndBlockNumber);
 
-    const augmentedBlocksWithUncleBlocks = [...allBlocks, ...someBlocksWithUncleBlocks];
+    const partialSupply: WEI = calculateBlockReward(blocksWithUncleBlocks);
+
+    blockRewardSupply = blockRewardSupply.plus(partialSupply);
 
     if (currentEndBlockNumber === endBlockNumber) {
-        return augmentedBlocksWithUncleBlocks;
+        return;
     }
     else {
-        return await getBlocksWithUncleBlocks(startBlockNumber, endBlockNumber, currentStartBlockNumber + skip, skip, augmentedBlocksWithUncleBlocks);
+        await calculateBlockRewardSupply(startBlockNumber, endBlockNumber, currentStartBlockNumber + skip, skip);
     }
 }
 
@@ -349,18 +325,24 @@ async function getLatestBlockNumber(): Promise<number> {
     return parseInt(resultJSON.result);
 }
 
-// function calculateBlockRewardSupply(latestBlockNumber: number): WEI {
-//     const blockRewardSupplyFrom0To4369999: WEI = new BigNumber(4370000).times(getBlockReward(0));
-//     const blockRewardSupplyFrom437000To7280000: WEI = new BigNumber(2910000).times(getBlockReward(4370000));
-//     const blockRewardSupplyRemaining: WEI = new BigNumber(latestBlockNumber - 7280000).times(getBlockReward(7280000));
+function calculateBlockReward(blocksWithUncleBlocks: ReadonlyArray<BlockWithUncleBlocks>): WEI {
+    return blocksWithUncleBlocks.reduce((blockRewardSupply: WEI, blockWithUncleBlocks: Readonly<BlockWithUncleBlocks>) => {
+        return blockRewardSupply.plus(calculateBlockRewardForBlockWithUncleBlocks(blockWithUncleBlocks));
+    }, new BigNumber(0));
+}
 
-//     return blockRewardSupplyFrom0To4369999.plus(blockRewardSupplyFrom437000To7280000).plus(blockRewardSupplyRemaining);
-// }
-
-// TODO I think the uncle reward calculations might be more complicated than I thought
-// async function calculateUncleRewardSupply(latestBlockNumber: number): Promise<WEI> {
-//     const numUnclesForBlocks: Array<number> = await getNumUnclesForBlocks(1, latestBlockNumber);
-//     return numUnclesForBlocks.reduce((sum: WEI, numUncles: number, index: number) => {
-//         return sum.plus(getUncleReward(index).times(numUncles));
-//     }, new BigNumber(0));
-// }
+// Ethereum Yellow Paper: https://ethereum.github.io/yellowpaper/paper.pdf 11.3. Reward Application.
+// Geth implementation: https://github.com/ethereum/go-ethereum/blob/master/consensus/ethash/consensus.go#L621
+// Open Ethereum implementation: 
+// Nethermind implementation: 
+function calculateBlockRewardForBlockWithUncleBlocks(blockWithUncleBlocks: Readonly<BlockWithUncleBlocks>): WEI {
+    const blockNumber: number = parseInt(blockWithUncleBlocks.number, 16);
+    const baseBlockReward: WEI = getBlockReward(blockNumber);
+    const blockRewardForUncles: WEI = baseBlockReward.multipliedBy(blockWithUncleBlocks.uncles.length).dividedBy(32);
+    const uncleBlockRewards: WEI = blockWithUncleBlocks.uncles.reduce((result: WEI, uncleBlock: Readonly<UncleBlock>) => {
+        const uncleBlockNumber: number = parseInt(uncleBlock.number, 16);
+        return result.plus(baseBlockReward.multipliedBy(new BigNumber(uncleBlockNumber).plus(8).minus(blockNumber)).dividedBy(8));
+    }, new BigNumber(0));
+    
+    return baseBlockReward.plus(blockRewardForUncles).plus(uncleBlockRewards);
+}
