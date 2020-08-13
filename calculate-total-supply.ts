@@ -21,6 +21,18 @@
 
 // TODO trying to get memory under control
 
+// TODO change all wording to issued, issuance, to indicate that this is a calculation of the issued supply according to the rules of the protocol
+// TODO the actual total supply will have to be calculated by walking account balances
+// TODO theoretically, if done correctly, walking the account balances should match the calculated supply issuance
+
+// geth cache 2048
+// 5696753 at 2020-08-13T15:24:56.210Z
+// 5715955 at 2020-08-13T15:34:28.311Z
+// (5715955 - 5696753) / 10 min = 1920.2 blocks per minute
+
+// geth cache 4096
+// 
+
 import * as fetch from 'node-fetch';
 import * as fs from 'fs';
 import { BigNumber } from 'bignumber.js';
@@ -68,38 +80,40 @@ type UncleBlockMap = {
     [uncleHash: string]: HexString;
 };
 
-let blockRewardSupply = new BigNumber(0);
-
 (async () => {
     const genesisSupply: WEI = calculateGenesisSupply();
 
-    console.log('genesisSupply', genesisSupply.toString());
+    console.log('genesis supply in WEI:', genesisSupply.toFixed());
 
     const genesisSupplyInETH: ETH = genesisSupply.dividedBy(10**18);
 
-    console.log('genesisSupplyInETH', genesisSupplyInETH.toString());
+    console.log('genesis supply in ETH:', genesisSupplyInETH.toString());
+    console.log();
 
     // // const latestBlockNumber: number = await getLatestBlockNumber();
-    // const latestBlockNumber: number = 6912; // should be 72,049,306.59375 or 72,049,306.59323
-    const latestBlockNumber: number = 4000000;
+    // const latestBlockNumber: number = 6912; // should be 72049306.59375 or 72049306.59323
+    // const latestBlockNumber: number = 10619692; // should be 112095482.21875
+    const latestBlockNumber: number = 1000000;
 
-    console.log('latestBlockNumber', latestBlockNumber);
+    console.log('latest block number:', latestBlockNumber);
+    console.log();
 
-    await calculateBlockRewardSupply(1, latestBlockNumber);
+    const blockRewardSupply: WEI = await calculateBlockRewardSupply(0, latestBlockNumber, genesisSupply);
 
-    console.log('blockRewardSupply', blockRewardSupply.toString());
+    console.log('block reward supply in WEI:', blockRewardSupply.toFixed());
 
     const blockRewardSupplyInETH: ETH = blockRewardSupply.dividedBy(10**18);
 
-    console.log('blockRewardSupplyInETH', blockRewardSupplyInETH.toString());
+    console.log('block reward supply in ETH:', blockRewardSupplyInETH.toString());
+    console.log();
 
     const totalSupply: WEI = genesisSupply.plus(blockRewardSupply);
 
-    console.log('totalSupply', totalSupply.toString());
+    console.log(`total supply in WEI at block ${latestBlockNumber}:`, totalSupply.toFixed());
 
     const totalSupplyInETH: ETH = (genesisSupply.plus(blockRewardSupply)).dividedBy(10**18);
 
-    console.log('totalSupplyInETH', totalSupplyInETH.toString());
+    console.log(`total supply in ETH at block ${latestBlockNumber}:`, totalSupplyInETH.toString());
 })();
 
 function calculateGenesisSupply(): WEI {
@@ -156,8 +170,8 @@ function calculateGenesisSupplyFromNethermindConfig(): WEI {
 
 // Geth block reward definitions: https://github.com/ethereum/go-ethereum/blob/master/consensus/ethash/consensus.go#L40
 // Geth hard fork block number definitions: https://github.com/ethereum/go-ethereum/blob/master/params/config.go#L55
-// Open Ethereum block reward definitions:
-// Open Ethereum hard fork block number definitions:
+// Open Ethereum block reward definitions: https://github.com/openethereum/openethereum/blob/master/ethcore/block-reward/src/lib.rs??
+// Open Ethereum hard fork block number definitions: https://github.com/openethereum/openethereum/blob/master/ethcore/block-reward/src/lib.rs??
 // Nethermind block reward definitions:
 // Nethermind hard fork block number definitions:
 function getBlockReward(blockNumber: number): WEI {
@@ -181,29 +195,33 @@ function getBlockReward(blockNumber: number): WEI {
 async function calculateBlockRewardSupply(
     startBlockNumber: number,
     endBlockNumber: number,
-    currentStartBlockNumber: number = startBlockNumber,
+    genesisSupply: WEI,
     skip: number = 10000
-): Promise<void> {
+): Promise<WEI> {
 
-    console.log('blockRewardSupply', blockRewardSupply.toString());
-
-    const currentEndBlockNumber: number = currentStartBlockNumber + skip - 1 < endBlockNumber ? currentStartBlockNumber + skip - 1 : endBlockNumber;
-
-    console.log('currentStartBlockNumber', currentStartBlockNumber);
-    console.log('currentEndBlockNumber', currentEndBlockNumber);
-
-    const blocksWithUncleBlocks: ReadonlyArray<BlockWithUncleBlocks> = await fetchBlocksWithUncleBlocks(currentStartBlockNumber, currentEndBlockNumber);
-
-    const partialSupply: WEI = calculateBlockReward(blocksWithUncleBlocks);
-
-    blockRewardSupply = blockRewardSupply.plus(partialSupply);
-
-    if (currentEndBlockNumber === endBlockNumber) {
-        return;
+    if (startBlockNumber === 0) {
+        return calculateBlockRewardSupply(startBlockNumber + 1, endBlockNumber, genesisSupply, skip);
     }
-    else {
-        await calculateBlockRewardSupply(startBlockNumber, endBlockNumber, currentStartBlockNumber + skip, skip);
+
+    let blockRewardSupply: WEI = new BigNumber(0);
+
+    for (let i=startBlockNumber; i <= endBlockNumber; i += skip) {
+        const currentStartBlockNumber: number = i === startBlockNumber ? startBlockNumber : startBlockNumber + i - 1;
+        const currentEndBlockNumber: number = currentStartBlockNumber + skip - 1 < endBlockNumber ? currentStartBlockNumber + skip - 1 : endBlockNumber;
+
+        console.log(`fetching blocks ${currentStartBlockNumber}-${currentEndBlockNumber}`);
+
+        const blocksWithUncleBlocks: ReadonlyArray<BlockWithUncleBlocks> = await fetchBlocksWithUncleBlocks(currentStartBlockNumber, currentEndBlockNumber);
+    
+        const partialSupply: WEI = calculateBlockReward(blocksWithUncleBlocks);
+    
+        blockRewardSupply = blockRewardSupply.plus(partialSupply);
+    
+        console.log(`total supply at block ${currentEndBlockNumber}: ${genesisSupply.plus(blockRewardSupply).dividedBy(10**18)} ETH`);
+        console.log();
     }
+
+    return blockRewardSupply;
 }
 
 async function fetchBlocksWithUncleBlocks(startBlockNumber: number, endBlockNumber: number): Promise<ReadonlyArray<BlockWithUncleBlocks>> {
@@ -259,6 +277,10 @@ async function fetchUncleBlocks(blocks: ReadonlyArray<Block>): Promise<ReadonlyA
             };
         })];
     }).flat(); // TODO add the TypeScript config to get rid of this error
+
+    if (requestBody.length === 0) {
+        return [];
+    }
 
     const response = await fetch('http://localhost:8545', {
         method: 'POST',
