@@ -44,10 +44,12 @@ function calculateBlockRewardForBlocksWithUncleBlocks(blocksWithUncleBlocks: Rea
     }, new BigNumber(0));
 }
 
+// TODO go through each source here, and manually check that the math is correct
+
 // Ethereum Yellow Paper: https://ethereum.github.io/yellowpaper/paper.pdf 11.3. Reward Application.
 // Geth implementation: https://github.com/ethereum/go-ethereum/blob/master/consensus/ethash/consensus.go#L621
-// Open Ethereum implementation: 
-// Nethermind implementation: 
+// Open Ethereum implementation: https://github.com/openethereum/openethereum/blob/master/ethcore/engines/ethash/src/lib.rs#L248????
+// Nethermind implementation: https://github.com/NethermindEth/nethermind/blob/f5c249445452177873372f905ab65ba366a29713/src/Nethermind/Nethermind.Blockchain/Rewards/RewardCalculator.cs#L43
 function calculateBlockRewardForBlockWithUncleBlocks(blockWithUncleBlocks: Readonly<BlockWithUncleBlocks>): WEI {
     const blockNumber: number = parseInt(blockWithUncleBlocks.number, 16);
     const baseBlockReward: WEI = getBaseBlockReward(blockNumber);
@@ -62,10 +64,8 @@ function calculateBlockRewardForBlockWithUncleBlocks(blockWithUncleBlocks: Reado
 
 // Geth block reward definitions: https://github.com/ethereum/go-ethereum/blob/master/consensus/ethash/consensus.go#L40
 // Geth hard fork block number definitions: https://github.com/ethereum/go-ethereum/blob/master/params/config.go#L55
-// Open Ethereum block reward definitions: https://github.com/openethereum/openethereum/blob/master/ethcore/block-reward/src/lib.rs??
-// Open Ethereum hard fork block number definitions: https://github.com/openethereum/openethereum/blob/master/ethcore/block-reward/src/lib.rs??
-// Nethermind block reward definitions:
-// Nethermind hard fork block number definitions:
+// Open Ethereum block reward and hard fork block number definitions: https://github.com/openethereum/openethereum/blob/master/ethcore/res/ethereum/foundation.json, look at engine.Ethash.params.blockReward
+// Nethermind block reward and hard fork block number definitions: https://github.com/NethermindEth/nethermind/blob/master/src/Nethermind/Chains/foundation.json, look at engine.Ethash.params.blockReward
 function getBaseBlockReward(blockNumber: number): WEI {
     if (
         blockNumber >= 1 &&
