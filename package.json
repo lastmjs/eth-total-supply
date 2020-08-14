@@ -5,7 +5,8 @@
   "scripts": {
     "start": "ts-node --transpile-only calculate-total-supply.ts",
     "geth-docker-pull": "docker pull ethereum/client-go",
-    "geth-main-fast-sync": "docker run -it -p 8545:8545 -p 30303:30303 -v ~/development/query-ethereum/geth-data:/root/.ethereum ethereum/client-go --graphql --http --http.api eth --http.addr 0.0.0.0 --http.corsdomain '*' --nousb --cache 2048"
+    "geth-main-fast-sync": "docker run -it -p 8545:8545 -p 8546:8546 -p 30303:30303 -v ~/development/query-ethereum/geth-data:/root/.ethereum ethereum/client-go --graphql --http --http.api eth --http.addr 0.0.0.0 --http.corsdomain '*' --ws --wsapi eth,net,web3 --wsaddr 0.0.0.0 --wsorigins '*' --nousb --cache 2048",
+    "geth-main-no-sync": "docker run -it -p 8545:8545 -p 8546:8546 -p 30303:30303 -v ~/development/query-ethereum/geth-data:/root/.ethereum ethereum/client-go --graphql --http --http.api eth --http.addr 0.0.0.0 --http.corsdomain '*' --ws --wsapi eth,net,web3 --wsaddr 0.0.0.0 --wsorigins '*' --nousb --cache 2048 --maxpeers 0"
   },
   "repository": {
     "type": "git",
@@ -23,5 +24,9 @@
     "node-fetch": "2.6.0",
     "ts-node": "8.10.2",
     "typescript": "3.9.7"
+  },
+  "devDependencies": {
+    "@types/node": "14.0.27",
+    "@types/node-fetch": "2.5.7"
   }
 }

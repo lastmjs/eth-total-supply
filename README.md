@@ -35,3 +35,21 @@ Well, this repo is open source and freely available on the internet. Anyone who 
 I do think it would be useful for this functionality to be built into the main Ethereum clients...I will search through the issues and perhaps open some of my own to get the opinions of the client developers. If this functionality is incorporate into Ethereum clients, it will be one less argument against the Ethereum blockchain, and will provide important information about the total supply of ETH to many more people.
 
 Consider opening an EIP to make this an important issue in the Ethereum community.
+
+## Comparisons with other scripts
+
+Pull requests are welcome for other scripts, clients, and sync types.
+
+Block Number | Ethereum Client | My Script | https://github.com/madumas/ethsupply | https://github.com/CurrencyTycoon/mysupplyaudit
+0 | Geth | 72009990.49948 | 72009990.5 |
+1000000 | Geth (fast sync) | 77311912.99948 | 77311913 |
+2000000 | Geth (fast sync) | 82594620.18698 | 82594620.1875 |
+3000000 | Geth (fast sync) | 87918591.90573 | 87918591.90625
+4000000 | Geth (fast sync) | 93163545.49948 | 93163545.5
+5000000 | Geth (fast sync) | 97303827.65573 | 97303829.65625
+6000000 | Geth (fast sync) |
+7000000 | Geth (fast sync) |
+8000000 | Geth (fast sync) |
+9000000 | Geth (fast sync) |
+10000000 | Geth (fast sync) |
+Do one from August | |
