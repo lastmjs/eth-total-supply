@@ -3,27 +3,27 @@ import {
     WEI,
     BlockWithUncleBlocks,
     UncleBlock
-} from './types.d';
+} from './types';
 import { fetchBlocksWithUncleBlocks } from './fetch-blocks';
 
 /**
- * Calculates the total issued supply between two block numbers inclusive.
- * Logs the cumulative issued supply as it progresses through the blockchain.
+ * Calculates the total issuance in WEI between two block numbers inclusive.
+ * Logs the cumulative issuance in ETH as it progresses through the blockchain.
  * Batching can be configured with the skip parameter, somewhere between 1000 and 10000 seems to work alright on Geth.
  */
-export async function calculateBlockRewardSupply(
+export async function calculateBlockRewardIssuance(
     startBlockNumber: number,
     endBlockNumber: number,
-    genesisSupply: WEI,
+    genesisIssuance: WEI,
     skip: number = 10000
 ): Promise<WEI> {
 
     // There was no block reward for block 0, so skip to block 1 if block 0 is provided as the startBlockNumber
     if (startBlockNumber === 0) {
-        return calculateBlockRewardSupply(startBlockNumber + 1, endBlockNumber, genesisSupply, skip);
+        return calculateBlockRewardIssuance(startBlockNumber + 1, endBlockNumber, genesisIssuance, skip);
     }
 
-    let blockRewardSupply: WEI = new BigNumber(0);
+    let blockRewardIssuance: WEI = new BigNumber(0);
 
     for (let i=startBlockNumber; i <= endBlockNumber; i += skip) {
         const currentStartBlockNumber: number = i === startBlockNumber ? startBlockNumber : startBlockNumber + i - 1;
@@ -35,22 +35,22 @@ export async function calculateBlockRewardSupply(
         const blocksWithUncleBlocks: ReadonlyArray<BlockWithUncleBlocks> = await fetchBlocksWithUncleBlocks(currentStartBlockNumber, currentEndBlockNumber);
         const blockRewardForBlocksWithUnclesBlocks: WEI = calculateBlockRewardForBlocksWithUncleBlocks(blocksWithUncleBlocks);
     
-        blockRewardSupply = blockRewardSupply.plus(blockRewardForBlocksWithUnclesBlocks);
+        blockRewardIssuance = blockRewardIssuance.plus(blockRewardForBlocksWithUnclesBlocks);
     
-        console.log(`block reward supply at block ${currentEndBlockNumber}: ${blockRewardSupply.dividedBy(10**18)} ETH`);
-        console.log(`total supply at block ${currentEndBlockNumber}: ${genesisSupply.plus(blockRewardSupply).dividedBy(10**18)} ETH`);
+        console.log(`total block reward issuance at block ${currentEndBlockNumber}: ${blockRewardIssuance.dividedBy(10**18)} ETH`);
+        console.log(`total issuance at block ${currentEndBlockNumber}: ${genesisIssuance.plus(blockRewardIssuance).dividedBy(10**18)} ETH`);
         console.log();
     }
 
-    return blockRewardSupply;
+    return blockRewardIssuance;
 }
 
 /**
  * Calculates the sum of all block rewards for passed in blocks with their uncle blocks.
  */
 function calculateBlockRewardForBlocksWithUncleBlocks(blocksWithUncleBlocks: ReadonlyArray<BlockWithUncleBlocks>): WEI {
-    return blocksWithUncleBlocks.reduce((blockRewardSupply: WEI, blockWithUncleBlocks: Readonly<BlockWithUncleBlocks>) => {
-        return blockRewardSupply.plus(calculateBlockRewardForBlockWithUncleBlocks(blockWithUncleBlocks));
+    return blocksWithUncleBlocks.reduce((blockReward: WEI, blockWithUncleBlocks: Readonly<BlockWithUncleBlocks>) => {
+        return blockReward.plus(calculateBlockRewardForBlockWithUncleBlocks(blockWithUncleBlocks));
     }, new BigNumber(0));
 }
 

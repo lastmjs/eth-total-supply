@@ -1,8 +1,11 @@
 # ETH Total Supply
 
-ETH issued as of block 10600000 (August 5th 2020):
+* Total ETH issued as of block 10600000 (August 5th 2020):
+* Total ETH in account balances as of block 10600000 (August 5th 2020):
 
-ETH in account balances as of block 10600000 (August 5th 2020):
+The purpose of this repository is to prove beyond reasonable doubt what the total supply of ETH is on Earth.
+
+## Some Background
 
 I recently found myself caught up in a (hopefully friendly) skirmish with Bitcoiners (https://twitter.com/lastmjs/status/1291741769932005381?s=20). They are very concerned about being able to calculate the total supply of ETH. I think this is important as well, though we probably disagree on the absolute vital nature of knowing the total supply perfectly. Nonetheless, this repo is an attempt at calculating the supply of ETH as accurately as possible.
 
