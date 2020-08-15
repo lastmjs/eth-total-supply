@@ -31,7 +31,6 @@ ETH issuance is specified in the Ethereum Yellow Paper, and is implemented in Et
 ETH issuance is well-documented in multiple locations, and the block reward calculations can be independently verified:
 
 * Ethereum Yellow Paper: https://ethereum.github.io/yellowpaper/paper.pdf 11.3. Reward Application.
-* This repository: https://github.com/lastmjs/eth-total-supply/blob/master/calculate-block-reward-supply.ts#L67
 * Geth: https://github.com/ethereum/go-ethereum/blob/master/consensus/ethash/consensus.go#L621
 * Open Ethereum: https://github.com/openethereum/openethereum/blob/master/ethcore/engines/ethash/src/lib.rs#L248
 * Nethermind: https://github.com/NethermindEth/nethermind/blob/f5c249445452177873372f905ab65ba366a29713/src/Nethermind/Nethermind.Blockchain/Rewards/RewardCalculator.cs#L43
@@ -71,6 +70,8 @@ For each uncle block:
 Summing up the base block reward, the block reward for uncle blocks, and the uncle block rewards gives you the total ETH rewards for that block.
 
 By walking through each block with each block's uncle blocks, the totality of ETH issued can be calculated. Assuming the Ethereum clients have implemented the algorithms correctly from the beginning, and there are no other confounding bugs, the total ETH in existence should not exceed this number. Most major Ethereum client implementation, as far as I know, are open source, and thus the code can be manually reviewed by interested parties.
+
+You can verify that the algorithm used in this repository is correct by using the above information and looking over the code here: https://github.com/lastmjs/eth-total-supply/blob/master/calculate-block-reward-issuance.ts#L67
 
 #### Known Open Source ETH Issuance Calculators
 
