@@ -54,7 +54,7 @@ The above rewards can be verified by looking at the client implementations:
 baseBlockReward = 5 ETH, 3 ETH, or 2 ETH depending on block number
 ```
 
-Once the base block reward is determined, a reward for including uncle blocks is calculated. This reward is equal to the base block reward multiplied by the number of uncles included in the block, and divided by 32. Essentially there is a 1/32 of the block reward included for each uncle.
+Once the base block reward is determined, a reward for including uncle blocks is calculated. This reward is equal to the base block reward multiplied by the number of uncles included in the block, and divided by 32. Essentially there is a 1/32nd of the block reward included for each uncle.
 
 ```
 blockRewardForUncles = baseBlockReward * numUncles / 32
