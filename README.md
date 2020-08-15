@@ -114,8 +114,7 @@ Please help fill out these tables with pull requests (or contact me with your re
 | 7000000 | Geth (fast sync) |
 | 8000000 | Geth (fast sync) |
 | 9000000 | Geth (fast sync) |
-| 10000000 | Geth (fast sync) |
-| 10600000 (August 5th 2020) |
+| 9193265 (the last block in 2019 UTC) | Geth (fast sync) |
 
 ### Total ETH Account Balances
 
@@ -131,8 +130,7 @@ Please help fill out these tables with pull requests (or contact me with your re
 | 7000000 |
 | 8000000 |
 | 9000000 |
-| 10000000 |
-| 10600000 (August 5th 2020) |
+| 9193265 (the last block in 2019 UTC) |
 
 ## Syncing an Ethereum Client
 
