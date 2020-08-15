@@ -1,13 +1,14 @@
 # ETH Total Supply
 
-TODO put here the total issued supply and total account balances supply as of a recent block.
+ETH issued as of block 10600000 (August 5th 2020):
+ETH in account balances as of block 10600000 (August 5th 2020):
 
-I recently found myself caught up in a (hopefully friendly) skirmish with Bitcoiners (https://twitter.com/lastmjs/status/1291741769932005381?s=20). They are very concerned about being able to calculate the total supply of ETH. I think this is important as well, though we probably disagree on the absolute vital nature of knowing the total supply perfectly. Nonetheless, this repo is an attempt at calculating the supply of ETH as accurately as feasible.
+I recently found myself caught up in a (hopefully friendly) skirmish with Bitcoiners (https://twitter.com/lastmjs/status/1291741769932005381?s=20). They are very concerned about being able to calculate the total supply of ETH. I think this is important as well, though we probably disagree on the absolute vital nature of knowing the total supply perfectly. Nonetheless, this repo is an attempt at calculating the supply of ETH as accurately as possible.
 
 ## Running the code
 
 * Install Node.js
-* Sync up an Ethereum client (TODO put in instructions for how to use this repository and docker to sync a node)
+* [Sync up an Ethereum client](#syncing-an-ethereum-client)
 * git clone https://github.com/lastmjs/eth-total-supply.git
 * cd eth-total-supply
 * npm install
@@ -107,3 +108,15 @@ Please help fill out this table with pull requests (or contact me with your resu
 * (Account balances) https://github.com/ledgerwatch/turbo-geth/pull/926/files
 * (Account balances) https://twitter.com/quickblocks/status/1294634704017264641?s=20
 * (Account balances) `geth dump --iterative --nocode --nostorage --incompletes 0| jq ".balance" |  tr -d \" | paste -sd+ | bc`
+
+## Syncing an Ethereum Client
+
+If you have never run an Ethereum client, this repository can help you. Follow these steps:
+
+* Install Docker: https://docs.docker.com/install/linux/docker-ce/ubuntu/
+* Clone and navigate to this repository with the following two commands:
+* git clone https://github.com/lastmjs/eth-total-supply.git
+* cd eth-total-supply
+* npm run geth-docker-pull
+* npm run geth-main-fast-sync
+* A rough estimate of how long it will take is in the 10s of hours

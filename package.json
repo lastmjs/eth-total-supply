@@ -1,7 +1,7 @@
 {
   "name": "eth-total-supply",
   "version": "0.0.0",
-  "description": "Calculate the total supply of ETH",
+  "description": "Information and some implementation for calculating the total supply of ETH",
   "scripts": {
     "start": "ts-node --transpile-only calculate-total-supply.ts",
     "geth-docker-pull": "docker pull ethereum/client-go",
