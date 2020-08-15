@@ -102,8 +102,8 @@ Please help fill out these tables with pull requests (or contact me with your re
 
 ### Total ETH Issued
 
-| Block Number | Ethereum Client (sync type) | https://github.com/lastmjs/eth-total-supply | https://github.com/madumas/ethsupply | https://github.com/CurrencyTycoon/mysupplyaudit
-| --- | --- | --- | --- | --- |
+| Block Number | Ethereum Client (sync type) | https://github.com/lastmjs/eth-total-supply | https://github.com/madumas/ethsupply | https://github.com/Great-Hill-Corporation/trueblocks-core/tree/develop/src/other/issuance | https://github.com/CurrencyTycoon/mysupplyaudit
+| --- | --- | --- | --- | --- | --- |
 | 0 | Geth (fast sync) | 72009990.49948 | 72009990.5 |
 | 1000000 | Geth (fast sync) | 77311912.99948 | 77311913 |
 | 2000000 | Geth (fast sync) | 82594620.18698 | 82594620.1875 |
