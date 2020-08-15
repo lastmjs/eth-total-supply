@@ -41,6 +41,7 @@ Consider opening an EIP to make this an important issue in the Ethereum communit
 ## Comparisons with other scripts
 
 Pull requests are welcome for other scripts, clients, and sync types.
+Add a call for pull requests here, I would love to crowd-source the answers to this table
 
 Block Number | Ethereum Client | My Script | https://github.com/madumas/ethsupply | https://github.com/CurrencyTycoon/mysupplyaudit
 0 | Geth | 72009990.49948 | 72009990.5 |
@@ -55,3 +56,21 @@ Block Number | Ethereum Client | My Script | https://github.com/madumas/ethsuppl
 9000000 | Geth (fast sync) |
 10000000 | Geth (fast sync) |
 Do one from August | |
+
+## Known Supply Verification Scripts
+
+* https://github.com/lastmjs/eth-total-supply
+* https://github.com/madumas/ethsupply
+* https://github.com/CurrencyTycoon/mysupplyaudit
+* https://github.com/NethermindEth/nethermind/blob/3e81fb7a05de1b7122d0ca1aff6b57dbb88c3841/src/Nethermind/Nethermind.Blockchain/Visitors/RewardsVerifier.cs
+* https://twitter.com/mhswende/status/1292730179777974273?s=20
+* https://github.com/ledgerwatch/turbo-geth/pull/926/files
+* https://twitter.com/quickblocks/status/1294634704017264641?s=20
+* `geth dump --iterative --nocode --nostorage --incompletes 0| jq ".balance" |  tr -d \" | paste -sd+ | bc`
+
+## Walking account balances
+
+// TODO another way to verify the supply would be to walk all accounts and add up their balances
+// TODO one caveat to this is selfdestructed contracts who send the balances to themselves...would have to account for that somehow
+
+Explain overriding the json-rpc endpoint
