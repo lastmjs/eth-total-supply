@@ -67,9 +67,9 @@ For each uncle block:
 
 Summing up the base block reward, the block reward for uncle blocks, and the uncle block rewards gives you the total ETH rewards for that block.
 
-By walking through each block with each block's uncle blocks, the totality of ETH issued can be calculated. Assuming the Ethereum clients have implemented the algorithms correctly from the beginning, and there are no other major bugs in ETH account balances and transfers, the total ETH in existence should not exceed this number. Most major Ethereum client implementation, as far as I know, are open source, and thus the code can be manually reviewed by interested parties.
+By walking through each block with each block's uncle blocks, the totality of ETH issued can be calculated. Assuming the Ethereum clients have implemented the algorithms correctly from the beginning, and there are no other confounding bugs, the total ETH in existence should not exceed this number. Most major Ethereum client implementation, as far as I know, are open source, and thus the code can be manually reviewed by interested parties.
 
-#### Known ETH Issuance Calculators
+#### Known Open Source ETH Issuance Calculators
 
 * https://github.com/lastmjs/eth-total-supply
 * https://github.com/madumas/ethsupply
@@ -77,15 +77,18 @@ By walking through each block with each block's uncle blocks, the totality of ET
 
 ### Total ETH Account Balances
 
-Another way to find the total supply of ETH is to look at the account balances at a given block, and sum up those account balances. In theory this should be even more accurate than the issuance, since it will account for destroyed ETH and potentially unknown bugs in issuance. This library does not perform this calculation, but the following resources do:
+Another way to find the total supply of ETH is to look at the account balances at a given block, and sum up those account balances. In theory this should be even more accurate than the issuance, since it will account for destroyed ETH and potentially unknown bugs in issuance. This library does not perform this calculation, but the following resources may do so:
 
-#### Known ETH Account Balance Calculators
+#### Known Open Source ETH Account Balance Calculators
 
-* https://github.com/NethermindEth/nethermind/blob/3e81fb7a05de1b7122d0ca1aff6b57dbb88c3841/src/Nethermind/Nethermind.Blockchain/Visitors/RewardsVerifier.cs
-* https://twitter.com/mhswende/status/1292730179777974273?s=20
-* https://github.com/ledgerwatch/turbo-geth/pull/926/files
-* https://twitter.com/quickblocks/status/1294634704017264641?s=20
-* `geth dump --iterative --nocode --nostorage --incompletes 0| jq ".balance" |  tr -d \" | paste -sd+ | bc`
+* Geth
+  * `geth dump --iterative --nocode --nostorage --incompletes 0| jq ".balance" |  tr -d \" | paste -sd+ | bc`
+  * Source is this Tweet: https://twitter.com/mhswende/status/1292730179777974273?s=20
+* Turbo-Geth
+  * https://github.com/ledgerwatch/turbo-geth/pull/926/files
+  * More information: https://twitter.com/quickblocks/status/1294634704017264641?s=20
+* Nethermind
+  * https://github.com/NethermindEth/nethermind/blob/3e81fb7a05de1b7122d0ca1aff6b57dbb88c3841/src/Nethermind/Nethermind.Blockchain/Visitors/RewardsVerifier.cs
 
 ## Reconciliation
 
@@ -126,17 +129,6 @@ Please help fill out these tables with pull requests (or contact me with your re
 | 9000000 |
 | 10000000 |
 | 10600000 (August 5th 2020) |
-
-## All Known Supply Verification Calculators
-
-* (Issuance) https://github.com/lastmjs/eth-total-supply
-* (Issuance) https://github.com/madumas/ethsupply
-* (Issuance) https://github.com/CurrencyTycoon/mysupplyaudit
-* (Account balances) https://github.com/NethermindEth/nethermind/blob/3e81fb7a05de1b7122d0ca1aff6b57dbb88c3841/src/Nethermind/Nethermind.Blockchain/Visitors/RewardsVerifier.cs
-* (Account balances) https://twitter.com/mhswende/status/1292730179777974273?s=20
-* (Account balances) https://github.com/ledgerwatch/turbo-geth/pull/926/files
-* (Account balances) https://twitter.com/quickblocks/status/1294634704017264641?s=20
-* (Account balances) `geth dump --iterative --nocode --nostorage --incompletes 0| jq ".balance" |  tr -d \" | paste -sd+ | bc`
 
 ## Syncing an Ethereum Client
 
