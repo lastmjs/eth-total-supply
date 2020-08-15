@@ -16,7 +16,7 @@ I recently found myself caught up in a (hopefully friendly) skirmish with Bitcoi
 * npm start
 * The script will then prompt you for a block number. It will calculate the total ETH issued up to and including that block.
 
-The default JSON-RPC endpoint is `http://localhost:8545`. If you need to change it, use the `JSON_RPC_ENDPOINT` environment variable. `npm start` then becomes `JSON_RPC_ENDPOINT=http://localhost:8545`, replacing `http://localhost:8545` with the origin of your JSON-RPC endpoint.
+The default JSON-RPC endpoint is `http://localhost:8545`. If you need to change it, use the `JSON_RPC_ENDPOINT` environment variable. `npm start` then becomes `JSON_RPC_ENDPOINT=http://localhost:8545 npm start`, replacing `http://localhost:8545` with the origin of your JSON-RPC endpoint.
 
 ## Methodology
 
@@ -37,9 +37,9 @@ ETH issuance works as follows:
 
 For each block, a base reward is applied. This reward varies based on hard forks. The base rewards are as follows:
 
-From blocks 0-4369999: 5 ETH
-From blocks 4370000-7279999: 3 ETH
-From blocks 7280000-present: 2 ETH
+* From blocks 0-4369999: 5 ETH
+* From blocks 4370000-7279999: 3 ETH
+* From blocks 7280000-present: 2 ETH
 
 The above rewards can be verified by looking at the client implementations:
 
