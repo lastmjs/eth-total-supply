@@ -23,7 +23,9 @@ The default JSON-RPC endpoint is `http://localhost:8545`. If you need to change 
 
 ## Methodology
 
-There seem to be two main methods for calculating the total supply of ETH. The first is by calculating the total issuance according to the issuance algorithm. The second is by summing Ethereum account balances, including accounting for destroyed ETH. The code in this repository is currently focused on calculating total issued ETH. It may evolve to sum account balances as well, but currently it does not. There are other resources listed in this repository that can help you to sum account balances.
+There seem to be three main methods for calculating the total supply of ETH. The first is by calculating the total issuance according to the issuance algorithm. The second is by summing Ethereum account balances, including accounting for destroyed ETH. A third method (as in TrueBlock) is to query an Ethereum archive node for each miner's account balance prior to the block, add in the minerRewards and uncleRewards calculated at that block, and then querying the balance of each miner at the end of the block reconciling the balances.
+
+The code in this repository is currently focused on calculating total issued ETH. It may evolve to sum account balances as well, but currently it does not. There are other resources listed in this repository that can help you to sum account balances.
 
 ### Total ETH Issued
 
@@ -78,6 +80,7 @@ You can verify that the algorithm used in this repository is correct by using th
 * https://github.com/lastmjs/eth-total-supply
 * https://github.com/madumas/ethsupply
 * https://github.com/CurrencyTycoon/mysupplyaudit
+* https://github.com/Great-Hill-Corporation/trueblocks-core/tree/develop/src/other/issuance
 
 ### Total ETH Account Balances
 
@@ -102,19 +105,20 @@ Please help fill out these tables with pull requests (or contact me with your re
 
 ### Total ETH Issued
 
-| Block Number | Ethereum Client (sync type) | https://github.com/lastmjs/eth-total-supply | https://github.com/madumas/ethsupply | https://github.com/Great-Hill-Corporation/trueblocks-core/tree/develop/src/other/issuance | https://github.com/CurrencyTycoon/mysupplyaudit
+| Block Number | Ethereum Client (sync type) | [eth-total-supply](https://github.com/lastmjs/eth-total-supply) | [ethsupply](https://github.com/madumas/ethsupply) | [TrueBlocks<br/>(fix pending)](https://github.com/Great-Hill-Corporation/trueblocks-core/tree/develop/src/other/issuance) | [CurrencyTycoom](https://github.com/CurrencyTycoon/mysupplyaudit) |
 | --- | --- | --- | --- | --- | --- |
-| 0 | Geth (fast sync) | 72009990.49948 | 72009990.5 |
-| 1000000 | Geth (fast sync) | 77311912.99948 | 77311913 |
-| 2000000 | Geth (fast sync) | 82594620.18698 | 82594620.1875 |
-| 3000000 | Geth (fast sync) | 87918591.90573 | 87918591.90625 |
-| 4000000 | Geth (fast sync) | 93163545.49948 | 93163545.5 |
-| 5000000 | Geth (fast sync) | 97303827.65573 | 97303829.65625 |
-| 6000000 | Geth (fast sync) |
-| 7000000 | Geth (fast sync) |
-| 8000000 | Geth (fast sync) |
-| 9000000 | Geth (fast sync) |
-| 9193265 (the last block in 2019 UTC) | Geth (fast sync) |
+| 0 | Geth (fast sync) | 72009990.49948 | 72009990.5 | 72009990.49948 |
+| 1000000 | Geth (fast sync) | 77311912.99948 | 77311913 | 77311905.18698 |
+| 2000000 | Geth (fast sync) | 82594620.18698 | 82594620.1875 | 82594612.37448 |
+| 3000000 | Geth (fast sync) | 87918591.90573 | 87918591.90625 | 87918584.09323 |
+| 4000000 | Geth (fast sync) | 93163545.49948 | 93163545.5 | 93163537.68698 |
+| 5000000 | Geth (fast sync) | 97303827.65573 | 97303829.65625 | 97303819.84323 |
+| 6000000 | Geth (fast sync) | | | 100813962.90573 |
+| 7000000 | Geth (fast sync) | | | 104160550.65573 |
+| 8000000 | Geth (fast sync) | | | 106578023.46823 |
+| 9000000 | Geth (fast sync) | | | 108691148.59323 |
+| 9193265 (the last block in 2019 UTC) | Geth (fast sync) | | | |
+| 10000000 | Geth (fast sync) | | | 110787755.7807300 |
 
 ### Total ETH Account Balances
 
