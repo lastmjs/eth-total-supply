@@ -105,20 +105,20 @@ Please help fill out these tables with pull requests (or contact me with your re
 
 ### Total ETH Issued
 
-| Block Number | Ethereum Client (sync type) | [eth-total-supply](https://github.com/lastmjs/eth-total-supply) | [ethsupply](https://github.com/madumas/ethsupply) | [TrueBlocks<br/>(fix pending)](https://github.com/Great-Hill-Corporation/trueblocks-core/tree/develop/src/other/issuance) | [CurrencyTycoom](https://github.com/CurrencyTycoon/mysupplyaudit) |
-| --- | --- | --- | --- | --- | --- |
-| 0 | Geth (fast sync) | 72009990.49948 | 72009990.49948 | 72009990.49948 |
-| 1000000 | Geth (fast sync) | 77311912.99948 | 77311912.99948 | 77311905.18698 |
-| 2000000 | Geth (fast sync) | 82594620.18698 | 82594620.18698 | 82594612.37448 |
-| 3000000 | Geth (fast sync) | 87918591.90573 | 87918591.90573 | 87918584.09323 |
-| 4000000 | Geth (fast sync) | 93163545.49948 | 93163545.49948 | 93163537.68698 |
-| 5000000 | Geth (fast sync) | 97303827.65573 | 97303827.65573 | 97303819.84323 |
-| 6000000 | Geth (fast sync) |                | 100813970.71823 | 100813962.90573 |
-| 7000000 | Geth (fast sync) |                | 104160558.46823 | 104160550.65573 |
-| 8000000 | Geth (fast sync) |                | 106578031.28073 | 106578023.46823 |
-| 9000000 | Geth (fast sync) |                | 108691156.40573 | 108691148.59323 |
-| 9193265 (the last block in 2019 UTC) | Geth (fast sync) | | 109094014.21823 | |
-| 10000000 | Geth (fast sync) | | | 110787755.7807300 |
+| Block Number | Ethereum Client (sync type) | [eth-total-supply](https://github.com/lastmjs/eth-total-supply) | [ethsupply](https://github.com/madumas/ethsupply) | [TrueBlocks<br/>(fix pending)](https://github.com/Great-Hill-Corporation/trueblocks-core/tree/develop/src/other/issuance) | [Google Bigquery Public ETH dataset](https://gist.github.com/jo-tud/5078ee865ad212e80dac3aa37523a6ec) | [CurrencyTycoom](https://github.com/CurrencyTycoon/mysupplyaudit) |
+| --- | --- | --- | --- | --- | --- | --- |
+| 0 | Geth (fast sync) | 72009990.49948 | 72009990.49948 | 72009990.49948 | 72009990499480000000000000 |
+| 1000000 | Geth (fast sync) | 77311912.99948 | 77311912.99948 | 77311905.18698 | 77311912999480000000000000 |
+| 2000000 | Geth (fast sync) | 82594620.18698 | 82594620.18698 | 82594612.37448 | 82594620184980000000000000 |
+| 3000000 | Geth (fast sync) | 87918591.90573 | 87918591.90573 | 87918584.09323 | 87918591903729999999999997 |
+| 4000000 | Geth (fast sync) | 93163545.49948 | 93163545.49948 | 93163537.68698 | 93163545497479999999999997 |
+| 5000000 | Geth (fast sync) | 97303827.65573 | 97303827.65573 | 97303819.84323 | 97303827553729999999999997 |
+| 6000000 | Geth (fast sync) |                | 100813970.71823 | 100813962.90573 | 100813970487171071999999954 |
+| 7000000 | Geth (fast sync) |                | 104160558.46823 | 104160550.65573 | 104160558230204627920942204 |
+| 8000000 | Geth (fast sync) |                | 106578031.28073 | 106578023.46823 | 106578030929497390795594961 |
+| 9000000 | Geth (fast sync) |                | 108691156.40573 | 108691148.59323 | 108691155838851536895834904 |
+| 9193265 (the last block in 2019 UTC) | Geth (fast sync) | | 109094014.21823 | | 109094013651351536895834904 |
+| 10000000 | Geth (fast sync) | | | 110787755.7807300 | 110787763026351536895834903 |
 
 ### Total ETH Account Balances
 
