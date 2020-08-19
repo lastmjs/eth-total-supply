@@ -96,6 +96,8 @@ Another way to find the total supply of ETH is to look at the account balances a
   * More information: https://twitter.com/quickblocks/status/1294634704017264641?s=20
 * Nethermind
   * https://github.com/NethermindEth/nethermind/blob/3e81fb7a05de1b7122d0ca1aff6b57dbb88c3841/src/Nethermind/Nethermind.Blockchain/Visitors/RewardsVerifier.cs
+* Google data set
+  * https://gist.github.com/jo-tud/6181a1ab690631accf79dd43d8666747
 
 ## Reconciliation
 

@@ -6,7 +6,7 @@
     "start": "ts-node --transpile-only calculate-total-issuance.ts",
     "geth-docker-pull": "docker pull ethereum/client-go",
     "geth-main-fast-sync": "docker run -it -p 8545:8545 -p 8546:8546 -p 30303:30303 -v ~/development/query-ethereum/geth-data:/root/.ethereum ethereum/client-go --graphql --http --http.api eth,admin,debug --http.addr 0.0.0.0 --http.corsdomain '*' --ws --ws.api eth,net,web3 --ws.addr 0.0.0.0 --ws.origins '*' --nousb --cache 2048 --verbosity 4",
-    "geth-main-no-sync": "docker run -it -p 8545:8545 -p 8546:8546 -p 30303:30303 -v ~/development/query-ethereum/geth-data:/root/.ethereum ethereum/client-go --graphql --http --http.api eth,admin,debug --http.addr 0.0.0.0 --http.corsdomain '*' --ws --ws.api eth,net,web3 --ws.addr 0.0.0.0 --ws.origins '*' --nousb --cache 2048 --maxpeers 0 --verbosity 4",
+    "geth-main-no-sync": "docker run -it -p 8545:8545 -p 8546:8546 -p 30303:30303 -v ~/development/query-ethereum/geth-data:/root/.ethereum ethereum/client-go --graphql --http --http.api eth,admin,debug --http.addr 0.0.0.0 --http.corsdomain '*' --ws --ws.api eth,net,web3 --ws.addr 0.0.0.0 --ws.origins '*' --nousb --cache 2048 --maxpeers 0",
     "geth-main-attach": "docker run -it --network host ethereum/client-go attach http://localhost:8545"
   },
   "repository": {
