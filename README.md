@@ -107,7 +107,7 @@ Please help fill out these tables with pull requests (or contact me with your re
 
 ### Total ETH Issued
 
-| Block Number | [eth-total-supply](https://github.com/lastmjs/eth-total-supply)<br/>(geth fast sync) | [ethsupply](https://github.com/madumas/ethsupply)<br/>(geth fast sync) | [TrueBlocks](https://github.com/Great-Hill-Corporation/trueblocks-core/tree/develop/src/other/issuance)<br/>(parity archive) | [CurrencyTycoon](https://github.com/CurrencyTycoon/mysupplyaudit)<br/>(geth fast sync) |
+| Block Number | [eth-total-supply](https://github.com/lastmjs/eth-total-supply)<br/>(geth fast sync) | [ethsupply](https://github.com/madumas/ethsupply)<br/>(geth archive) | [TrueBlocks](https://github.com/Great-Hill-Corporation/trueblocks-core/tree/develop/src/other/issuance)<br/>(parity archive) | [CurrencyTycoon](https://github.com/CurrencyTycoon/mysupplyaudit)<br/>(geth fast sync) |
 | --- | --- | --- | --- | --- |
 | 0 |  72009990.49948 | 72009990.49948 | 72009990.49948 | |
 | 1000000 | 77311912.99948 | 77311912.99948 | 77311912.99948 | |
